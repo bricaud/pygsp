@@ -104,6 +104,8 @@ class Graph(fourier.GraphFourier, difference.GraphDifference):
                          'edge_style': '-'}
         self.plotting.update(plotting)
 
+        self.signals = dict()
+
         # TODO: kept for backward compatibility.
         self.Ne = self.n_edges
         self.N = self.n_nodes

@@ -166,7 +166,7 @@ _NNGRAPHS = [
     'Cube',
     'ImgPatches',
     'Grid2dImgPatches',
-    'Sphere',
+#    'Sphere',
     'TwoMoons'
 ]
 
@@ -174,3 +174,5 @@ __all__ = _GRAPHS + _NNGRAPHS
 
 _utils.import_classes(_GRAPHS, 'graphs', 'graphs')
 _utils.import_classes(_NNGRAPHS, 'graphs.nngraphs', 'graphs')
+
+from .nngraphs.sphere import *

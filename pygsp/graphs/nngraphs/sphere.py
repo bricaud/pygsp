@@ -6,7 +6,15 @@ from pygsp.graphs import NNGraph  # prevent circular import in Python < 3.5
 
 
 class Sphere(NNGraph):
+    pass
+
+class SphereAngles(Sphere):
+    pass
+
+class SphereRandomUniform(Sphere):
     r"""Spherical-shaped graph (NN-graph).
+
+    Random uniform sampling of the d-dimensional sphere.
 
     Parameters
     ----------
@@ -22,6 +30,11 @@ class Sphere(NNGraph):
     seed : int
         Seed for the random number generator (for reproducible graphs).
 
+    References
+    ----------
+    http://mathworld.wolfram.com/HyperspherePointPicking.html
+    Hicks, J. S. ad Wheeling, R. F. "An Efficient Method for Generating Uniformly Distributed Points on the Surface of an n-Dimensional Sphere." Comm. Assoc. Comput. Mach. 2, 13-15, 1959.
+
     Examples
     --------
     >>> import matplotlib.pyplot as plt
@@ -35,44 +48,31 @@ class Sphere(NNGraph):
     """
 
     def __init__(self,
+                 n_points=300,
+                 n_dimensions=3,
                  radius=1,
-                 nb_pts=300,
-                 nb_dim=3,
-                 sampling='random',
+                 n_neighbors=10,
                  seed=None,
                  **kwargs):
 
+        self.n_dimensions = n_dimensions
         self.radius = radius
-        self.nb_pts = nb_pts
-        self.nb_dim = nb_dim
-        self.sampling = sampling
         self.seed = seed
 
-        if self.sampling == 'random':
-
-            rs = np.random.RandomState(seed)
-            pts = rs.normal(0, 1, (self.nb_pts, self.nb_dim))
-
-            for i in range(self.nb_pts):
-                pts[i] /= np.linalg.norm(pts[i])
-
-        else:
-
-            raise ValueError('Unknown sampling {}'.format(sampling))
+        rs = np.random.RandomState(seed)
+        points = rs.normal(0, 1, (n_points, n_dimensions))
+        points /= np.linalg.norm(points, axis=1)[:, np.newaxis]
 
         plotting = {
             'vertex_size': 80,
         }
 
-        super(Sphere, self).__init__(Xin=pts, k=10,
-                                     center=False, rescale=False,
+        super(SphereRandomUniform, self).__init__(points, k=n_neighbors, center=False, rescale=False,
                                      plotting=plotting, **kwargs)
 
     def _get_extra_repr(self):
         attrs = {'radius': '{:.2f}'.format(self.radius),
-                 'nb_pts': self.nb_pts,
-                 'nb_dim': self.nb_dim,
-                 'sampling': self.sampling,
+                 'n_dimensions': self.n_dimensions,
                  'seed': self.seed}
-        attrs.update(super(Sphere, self)._get_extra_repr())
+        attrs.update(super(SphereRandomUniform, self)._get_extra_repr())
         return attrs
